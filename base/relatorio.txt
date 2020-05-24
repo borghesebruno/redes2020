@@ -1,0 +1,24 @@
+Relatório de entrega do EP0
+
+Sistemas Distribuídos
+2Q de 2019
+
+Bruno Borghese
+RA 21028815
+
+B) Formato da mensagem transferida
+A mensagem está sendo transferida no formato "{cliente}-{mensagem}", onde:
+- {cliente} é o identificador do Cliente enviando a mensagem;
+- {mensagem} é o valor/número da mensagem, sendo possível os valores {1, 2, 3 ou 4}.
+
+C) Explicação em “alto nível” do tratamento de mensagens fora de ordem.
+Ao receber a mensagem, é identificado qual das quatro mensagens seria, e é marcado num array de booleanos como já recebida, assim não importa a ordem.
+
+D) Explicação em “alto nível” do tratamento de mensagens duplicadas.
+Ao receber a mensagem, é identificado qual das quatro mensagens seria, e é marcado num array de booleanos como já recebida, assim a mensagem repetidanão teria importância.
+
+E) Explicação em “alto nível” do consumo do buffer e tratamento de mensagens perdidas.
+Após receber qualquer mensagem, é verificado se todas as quatro já foram recebidas, e caso positivo, é encerrada a thread responsável por aquele cliente.
+
+F) Links dos lugares de onde baseou seu código (caso aplicável).
+Foram consultados os sites indicados no pdf sobre o EP, e sites diversos para dúvidas de sintáxe da linguagem devido à falta de familiariedade.
