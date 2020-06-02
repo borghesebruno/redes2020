@@ -11,14 +11,13 @@ public class Receiver {
     private static final int SENDER_PORT = 12345;
     private static final int RECEIVER_PORT = 12346;
     private static final int HEADER = 4 * 3; // 4 bytes para cada: numero do pacote, quantidade de pacotes, offset
-    private static final int MAX_CONTENT = 48;
+    private static final int MAX_CONTENT = 10;
     private static final int PACKAGE_SIZE = HEADER + MAX_CONTENT;
-    private static final int WINDOW_SIZE = 3;
 
     InetAddress sender_address;
     InetAddress receiver_address;
     boolean receiving;
-    String message;
+    StringBuilder message;
     int last_received;
     boolean[] received_packages;
     DatagramSocket socketAck;
@@ -31,7 +30,6 @@ public class Receiver {
     public Receiver() throws UnknownHostException, SocketException {
         receiver_address = InetAddress.getByName(RECEIVER_IP);
         receiving = false;
-        last_received = -1;
         socketAck = new DatagramSocket();
 
         ReceiveThread receiveThread = new ReceiveThread();
@@ -72,6 +70,8 @@ public class Receiver {
                     if (!receiving) {
                         receiving = true;
                         received_packages = new boolean[num_packages];
+                        last_received = -1;
+                        message = new StringBuilder();
                     }
 
                     boolean is_repeated = false;
@@ -79,6 +79,7 @@ public class Receiver {
                         received_packages[package_number] = true;
                         last_received++;
                         sendAck(package_number);
+                        message.append(received_content);
                     } else {
                         if (received_packages[package_number]) {
                             is_repeated = true;
@@ -89,6 +90,11 @@ public class Receiver {
                     System.out.println("Mensagem " + (is_repeated ? "repetida " : "") + (package_number + 1) + " de "
                             + num_packages + " recebida do sender " + fromClient + ", " + received_content.length()
                             + " bytes: " + received_content);
+
+                    if(received_packages[received_packages.length-1] == true) {
+                        receiving = false;
+                        System.out.println("MENSAGEM COMPLETA COM " + message.length() + " bytes: " + message.toString());
+                    }
                 }
             } catch (Exception e) {
                 System.err.println("---- ERRO AO RECEBER PACKAGE -----");
